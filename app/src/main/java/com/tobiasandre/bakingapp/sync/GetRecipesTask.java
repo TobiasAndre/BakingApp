@@ -1,9 +1,14 @@
 package com.tobiasandre.bakingapp.sync;
 
+import android.arch.persistence.room.Room;
+import android.content.Context;
 import android.os.AsyncTask;
 import android.util.Log;
 
+import com.tobiasandre.bakingapp.model.BakingDao;
+import com.tobiasandre.bakingapp.model.BakingDb;
 import com.tobiasandre.bakingapp.model.Recipe;
+import com.tobiasandre.bakingapp.model.Step;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -20,7 +25,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
 public class GetRecipesTask extends AsyncTask<Void, Void, List<Recipe>> {
 
     public static String TAG = GetRecipesTask.class.getSimpleName();
-
+    private final Context mContext;
     private final NotifyTaskCompletedCommand mCommand;
 
     public interface Listener {
@@ -45,8 +50,9 @@ public class GetRecipesTask extends AsyncTask<Void, Void, List<Recipe>> {
         }
     }
 
-    public GetRecipesTask(NotifyTaskCompletedCommand command) {
+    public GetRecipesTask(NotifyTaskCompletedCommand command,Context context) {
         mCommand = command;
+        this.mContext = context;
     }
 
     @Override
@@ -71,8 +77,10 @@ public class GetRecipesTask extends AsyncTask<Void, Void, List<Recipe>> {
         RecipesService service = retrofit.create(RecipesService.class);
         Call<List<Recipe>> call = service.discoverRecipes();
         try {
-            SyncRecipes(call.execute().body());
+            List<Recipe> recipesList = call.execute().body();
+            SyncRecipes(recipesList,mContext);
 
+            return recipesList;
 
         } catch (IOException e) {
             Log.e(TAG, "Ocorreu um problema ao obter as receitas:", e);
@@ -80,15 +88,16 @@ public class GetRecipesTask extends AsyncTask<Void, Void, List<Recipe>> {
         return null;
     }
 
-    private void SyncRecipes(List<Recipe> recipes){
-        try {
-            if(recipes!=null) {
-                for (Recipe r : recipes) {
-                    r.save();
-                }
+    private void SyncRecipes(List<Recipe> recipes,Context context){
+        if(recipes!=null) {
+            final BakingDb db = Room.databaseBuilder(context, BakingDb.class, "baking.db").build();
+            final BakingDao dao = db.getDao();
+
+            for (Recipe r : recipes) {
+                dao.insertRecipe(r);
+                dao.insertIngredient(r.getIngredients());
+                dao.insertStep(r.getSteps());
             }
-        }catch (Exception erro){
-            Log.e(TAG,erro.getMessage());
         }
     }
 

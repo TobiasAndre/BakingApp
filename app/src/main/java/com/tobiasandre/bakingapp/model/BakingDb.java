@@ -1,14 +1,13 @@
 package com.tobiasandre.bakingapp.model;
 
-import com.raizlabs.android.dbflow.annotation.Database;
+import android.arch.persistence.room.Database;
+import android.arch.persistence.room.RoomDatabase;
 
 /**
  * Created by Tobias Andre on 23/08/2017.
  */
 
-@Database(name = BakingDb.NAME, version = BakingDb.VERSION)
-public class BakingDb {
-    public static final String NAME = "BakingDb";
-
-    public static final int VERSION = 1;
+@Database(entities = {Recipe.class, Ingredient.class, Step.class}, version = 1)
+public abstract class BakingDb extends RoomDatabase {
+    public abstract BakingDao getDao();
 }

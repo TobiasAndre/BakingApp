@@ -1,23 +1,19 @@
 package com.tobiasandre.bakingapp.model;
 
+import android.arch.persistence.room.Entity;
+import android.arch.persistence.room.PrimaryKey;
+
 import com.google.gson.annotations.SerializedName;
-import com.raizlabs.android.dbflow.annotation.Column;
-import com.raizlabs.android.dbflow.annotation.PrimaryKey;
-import com.raizlabs.android.dbflow.annotation.Table;
-import com.raizlabs.android.dbflow.structure.BaseModel;
+
 
 /**
  * Created by Tobias Andre on 23/08/2017.
  */
-@Table(database = BakingDb.class)
-public class Step extends BaseModel{
+@Entity(primaryKeys = {"recipeId","_id"})
+public class Step {
 
-    private int recipeId;
-
-    @PrimaryKey
-    @Column(name = "id")
-    private int _id;
-
+    private Long recipeId;
+    private Long _id;
     @SerializedName("id")
     private Integer index;
 
@@ -33,19 +29,20 @@ public class Step extends BaseModel{
     @SerializedName("thumbnailURL")
     private String thumbnailURL;
 
-    public int getRecipeId() {
+
+    public Long getRecipeId() {
         return recipeId;
     }
 
-    public void setRecipeId(int recipeId) {
+    public void setRecipeId(Long recipeId) {
         this.recipeId = recipeId;
     }
 
-    public int get_id() {
+    public Long get_id() {
         return _id;
     }
 
-    public void set_id(int _id) {
+    public void set_id(Long _id) {
         this._id = _id;
     }
 

@@ -1,22 +1,19 @@
 package com.tobiasandre.bakingapp.model;
 
+import android.arch.persistence.room.Entity;
+import android.arch.persistence.room.PrimaryKey;
+
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
-import com.raizlabs.android.dbflow.annotation.PrimaryKey;
-import com.raizlabs.android.dbflow.annotation.Table;
-import com.raizlabs.android.dbflow.structure.BaseModel;
 
 /**
  * Created by Tobias Andre on 23/08/2017.
  */
-@Table(database = BakingDb.class)
-public class Ingredient extends BaseModel{
+@Entity(primaryKeys = {"id","recipeId"})
+public class Ingredient  {
 
-    @PrimaryKey
-    private int id;
-
-    private int recipeId;
-
+    private Long id;
+    private Long recipeId;
     @SerializedName("quantity")
     @Expose
     private Double quantity;
@@ -27,19 +24,20 @@ public class Ingredient extends BaseModel{
     @Expose
     private String ingredient;
 
-    public int getId() {
+
+    public Long getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
-    public int getRecipeId() {
+    public Long getRecipeId() {
         return recipeId;
     }
 
-    public void setRecipeId(int recipeId) {
+    public void setRecipeId(Long recipeId) {
         this.recipeId = recipeId;
     }
 
